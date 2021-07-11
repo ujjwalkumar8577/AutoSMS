@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ public class SmsActivity extends AppCompatActivity {
 
     private TextView textViewStatus;
     private EditText editTextMessage;
+    private ImageView imageViewInfo;
     private Button buttonSend, buttonSelect;
     private RadioGroup radioGroupSelectSim;
     private SmsManager smsManager;
@@ -44,6 +46,7 @@ public class SmsActivity extends AppCompatActivity {
 
         textViewStatus = findViewById(R.id.textViewStatus);
         editTextMessage = findViewById(R.id.editTextMessage);
+        imageViewInfo = findViewById(R.id.imageViewInfo);
         buttonSend = findViewById(R.id.buttonSend);
         buttonSelect = findViewById(R.id.buttonSelect);
         radioGroupSelectSim = findViewById(R.id.radioGroupSelectSim);
@@ -75,6 +78,22 @@ public class SmsActivity extends AppCompatActivity {
                         simID = 1;
                     }
                 }
+            }
+        });
+
+        imageViewInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder info = new AlertDialog.Builder(SmsActivity.this);
+                info.setTitle("Info");
+                info.setMessage("Enter the message, select the contacts file and click Send.");
+                info.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                info.create().show();
             }
         });
 
@@ -123,7 +142,8 @@ public class SmsActivity extends AppCompatActivity {
                     skipped++;
             }
             br.close();
-            Toast.makeText(SmsActivity.this, "Skipped " + skipped + " lines", Toast.LENGTH_SHORT).show();
+            if(skipped>0)
+                Toast.makeText(SmsActivity.this, "Skipped " + skipped + " lines", Toast.LENGTH_SHORT).show();
             textViewStatus.setText("Status : Retrieved " + phoneNumbers.size() + " contacts");
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,10 +164,10 @@ public class SmsActivity extends AppCompatActivity {
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Confirm");
-        alertDialog.setMessage("Message : " + message + "\nSim " + sim + "\nNo. of contacts : " + num);
+        alertDialog.setMessage("Message : " + message + "\nNo. of contacts : " + num + "\nSim " + sim);
         alertDialog.setPositiveButton("Send", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface _dialog, int _which) {
+            public void onClick(DialogInterface dialog, int which) {
                 int count = 0;
                 for(String phoneNumber : phoneNumbers) {
                     smsManager.sendTextMessage(phoneNumber, null, message, null, null);
@@ -159,7 +179,7 @@ public class SmsActivity extends AppCompatActivity {
         });
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface _dialog, int _which) {
+            public void onClick(DialogInterface dialog, int which) {
 
             }
         });
@@ -180,13 +200,13 @@ public class SmsActivity extends AppCompatActivity {
         exit.setMessage("Do you want to exit?");
         exit.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface _dialog, int _which) {
+            public void onClick(DialogInterface dialog, int which) {
                 finish();
             }
         });
         exit.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface _dialog, int _which) {
+            public void onClick(DialogInterface dialog, int which) {
 
             }
         });
