@@ -27,12 +27,13 @@ import java.util.ArrayList;
 
 public class SmsActivity extends AppCompatActivity {
 
-    private ArrayList<String> phoneNumbers;
     private TextView textViewStatus;
     private EditText editTextMessage;
     private Button buttonSend, buttonSelect;
     private RadioGroup radioGroupSelectSim;
     private SmsManager smsManager;
+
+    private ArrayList<String> phoneNumbers = new ArrayList<>();
     private int simID = 1;                          // default sim 1
     private final int REQUEST_CODE = 897;
 
@@ -83,7 +84,7 @@ public class SmsActivity extends AppCompatActivity {
                 if(editTextMessage.getText().toString().equals("")) {
                     Toast.makeText(SmsActivity.this, "Empty message", Toast.LENGTH_SHORT).show();
                 }
-                else if(phoneNumbers.size()==0) {
+                else if(phoneNumbers.size()<=0) {
                     Toast.makeText(SmsActivity.this, "Empty contact list", Toast.LENGTH_SHORT).show();
                 }
                 else {
@@ -96,7 +97,7 @@ public class SmsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent in = new Intent(Intent.ACTION_GET_CONTENT);
-                in.setType("*/*");
+                in.setType("text/*");
                 in.addCategory(Intent.CATEGORY_OPENABLE);
 
                 try {
@@ -113,14 +114,16 @@ public class SmsActivity extends AppCompatActivity {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(getContentResolver().openInputStream(uri)));
             phoneNumbers = new ArrayList<>();
+            int skipped = 0;
             String line = null;
             while ((line = br.readLine()) != null) {
                 if(isValid(line))
                     phoneNumbers.add(line);
                 else
-                    Toast.makeText(SmsActivity.this, "Skipped : " + line, Toast.LENGTH_SHORT).show();
+                    skipped++;
             }
             br.close();
+            Toast.makeText(SmsActivity.this, "Skipped " + skipped + " lines", Toast.LENGTH_SHORT).show();
             textViewStatus.setText("Status : Retrieved " + phoneNumbers.size() + " contacts");
         } catch (Exception e) {
             e.printStackTrace();
