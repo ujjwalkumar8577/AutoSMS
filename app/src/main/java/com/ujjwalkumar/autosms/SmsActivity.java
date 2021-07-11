@@ -59,71 +59,56 @@ public class SmsActivity extends AppCompatActivity {
 
         textViewStatus.setText("Status : Select contacts file");
 
-        radioGroupSelectSim.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                switch(i) {
-                    case R.id.radioButtonSim1: {
-                        Toast.makeText(SmsActivity.this, "SIM 1 selected", Toast.LENGTH_SHORT).show();
-                        simID = 1;
-                        break;
-                    }
-                    case R.id.radioButtonSim2: {
-                        Toast.makeText(SmsActivity.this, "SIM 2 selected", Toast.LENGTH_SHORT).show();
-                        simID = 2;
-                        break;
-                    }
-                    default: {
-                        Toast.makeText(SmsActivity.this, "SIM 1 selected", Toast.LENGTH_SHORT).show();
-                        simID = 1;
-                    }
+        radioGroupSelectSim.setOnCheckedChangeListener((radioGroup, i) -> {
+            switch(i) {
+                case R.id.radioButtonSim1: {
+                    Toast.makeText(SmsActivity.this, "SIM 1 selected", Toast.LENGTH_SHORT).show();
+                    simID = 1;
+                    break;
+                }
+                case R.id.radioButtonSim2: {
+                    Toast.makeText(SmsActivity.this, "SIM 2 selected", Toast.LENGTH_SHORT).show();
+                    simID = 2;
+                    break;
+                }
+                default: {
+                    Toast.makeText(SmsActivity.this, "SIM 1 selected", Toast.LENGTH_SHORT).show();
+                    simID = 1;
                 }
             }
         });
 
-        imageViewInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder info = new AlertDialog.Builder(SmsActivity.this);
-                info.setTitle("Info");
-                info.setMessage("Enter the message, select the contacts file and click Send.");
-                info.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        imageViewInfo.setOnClickListener(view -> {
+            AlertDialog.Builder info = new AlertDialog.Builder(SmsActivity.this);
+            info.setTitle("Info");
+            info.setMessage("Enter the message, select the contacts file and click Send.");
+            info.setPositiveButton("OK", (dialog, which) -> {
 
-                    }
-                });
-                info.create().show();
-            }
+            });
+            info.create().show();
         });
 
-        buttonSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(editTextMessage.getText().toString().equals("")) {
-                    Toast.makeText(SmsActivity.this, "Empty message", Toast.LENGTH_SHORT).show();
-                }
-                else if(phoneNumbers.size()<=0) {
-                    Toast.makeText(SmsActivity.this, "Empty contact list", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    sendSMStoAll();
-                }
+        buttonSend.setOnClickListener(view -> {
+            if(editTextMessage.getText().toString().equals("")) {
+                Toast.makeText(SmsActivity.this, "Empty message", Toast.LENGTH_SHORT).show();
+            }
+            else if(phoneNumbers.size()<=0) {
+                Toast.makeText(SmsActivity.this, "Empty contact list", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                sendSMStoAll();
             }
         });
         
-        buttonSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent in = new Intent(Intent.ACTION_GET_CONTENT);
-                in.setType("text/*");
-                in.addCategory(Intent.CATEGORY_OPENABLE);
+        buttonSelect.setOnClickListener(view -> {
+            Intent in = new Intent(Intent.ACTION_GET_CONTENT);
+            in.setType("text/*");
+            in.addCategory(Intent.CATEGORY_OPENABLE);
 
-                try {
-                    startActivityForResult(Intent.createChooser(in, "Select text file"), 987);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                startActivityForResult(Intent.createChooser(in, "Select text file"), 987);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
@@ -165,32 +150,23 @@ public class SmsActivity extends AppCompatActivity {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Confirm");
         alertDialog.setMessage("Message : " + message + "\nNo. of contacts : " + num + "\nSim " + sim);
-        alertDialog.setPositiveButton("Send", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int count = 0;
-                for(String phoneNumber : phoneNumbers) {
-                    smsManager.sendTextMessage(phoneNumber, null, message, null, null);
-                    count++;
-                    textViewStatus.setText("Status : Sent " + count + " of " + num);
-                }
-                Toast.makeText(SmsActivity.this, "Message sent to all", Toast.LENGTH_SHORT).show();
+        alertDialog.setPositiveButton("Send", (dialog, which) -> {
+            int count = 0;
+            for(String phoneNumber : phoneNumbers) {
+                smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+                count++;
+                textViewStatus.setText("Status : Sent " + count + " of " + num);
             }
+            Toast.makeText(SmsActivity.this, "Message sent to all", Toast.LENGTH_SHORT).show();
         });
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        alertDialog.setNegativeButton("Cancel", (dialog, which) -> {
 
-            }
         });
         alertDialog.create().show();
     }
 
     public boolean isValid(String num) {
-        if(num.length()==10 && TextUtils.isDigitsOnly(num))
-            return true;
-        else
-            return false;
+        return num.length() == 10 && TextUtils.isDigitsOnly(num);
     }
 
     @Override
@@ -198,17 +174,9 @@ public class SmsActivity extends AppCompatActivity {
         AlertDialog.Builder exit = new AlertDialog.Builder(this);
         exit.setTitle("Exit");
         exit.setMessage("Do you want to exit?");
-        exit.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-        exit.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        exit.setPositiveButton("Yes", (dialog, which) -> finish());
+        exit.setNegativeButton("No", (dialog, which) -> {
 
-            }
         });
         exit.create().show();
     }

@@ -12,7 +12,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AutoSMS">
+        android:theme="@style/Theme.AutoSMS"
+        android:fullBackupContent="@xml/backup_descriptor">
         <activity android:name=".SmsActivity" android:screenOrientation="portrait"/>
         <activity android:name=".MainActivity" android:screenOrientation="portrait" >
             <intent-filter>
